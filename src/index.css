@@ -1,0 +1,379 @@
+:root {
+  /* Color tokens — dark slate base, single green accent reserved
+     for "live" signals (the pulse on new requests). Everything else
+     stays neutral so the captured data is what draws the eye. */
+  --bg: #0d1117;
+  --bg-elevated: #151b23;
+  --bg-hover: #1c2330;
+  --border: #2d333b;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-tertiary: #6e7681;
+  --accent: #3fb950;
+  --accent-dim: #2ea043;
+  --danger: #f85149;
+
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+/* ========== ANIMATED DOT GRID BACKGROUND ========== */
+/* Subtle developer-aesthetic grid of softly pulsing dots */
+.dot-grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dot-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  animation: gridDrift 25s linear infinite;
+}
+
+.dot-grid-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 30%, var(--bg) 75%);
+}
+
+@keyframes gridDrift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+/* ========== SIGNATURE PULSE DOT ========== */
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+  position: relative;
+  cursor: default;
+  transition: box-shadow 0.3s ease;
+}
+
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: dotRing 2s ease-in-out infinite;
+}
+
+@keyframes dotRing {
+  0%, 100% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 0.3; transform: scale(1.4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  .live-dot::after {
+    animation: none;
+  }
+}
+
+/* ========== FLASH-IN FOR NEW REQUESTS ========== */
+@keyframes flash-in {
+  from { background: rgba(63, 185, 80, 0.18); }
+  to { background: transparent; }
+}
+
+.request-row--new {
+  animation: flash-in 1.5s ease-out;
+}
+
+/* ========== TYPING ANIMATION ========== */
+.typing-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--accent);
+  width: 0;
+  animation:
+    typeForward 1.2s steps(22) 0.5s forwards,
+    blinkCaret 0.6s step-end infinite,
+    hideCaret 0s linear 1.7s forwards; /* 0.5s delay + 1.2s duration = vanishes at 1.7s */
+}
+
+@keyframes typeForward {
+  to { width: 100%; }
+}
+
+@keyframes blinkCaret {
+  0%, 100% { border-color: var(--accent); }
+  50% { border-color: transparent; }
+}
+
+@keyframes hideCaret {
+  to { border-color: transparent; }
+}
+
+/* ========== STAGGERED FADE-UP ENTRANCE ========== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  filter: blur(4px);
+  animation: fadeUpIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-up-delay-1 { animation-delay: 0.15s; }
+.fade-up-delay-2 { animation-delay: 0.3s; }
+.fade-up-delay-3 { animation-delay: 0.45s; }
+.fade-up-delay-4 { animation-delay: 0.6s; }
+.fade-up-delay-5 { animation-delay: 0.75s; }
+
+@keyframes fadeUpIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ========== GLOWING BUTTON ========== */
+.glow-btn {
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.glow-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  background: var(--accent);
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.glow-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(63, 185, 80, 0.25);
+}
+
+.glow-btn:hover::before {
+  opacity: 0.3;
+}
+
+.glow-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ========== REQUEST ROW HOVER ========== */
+.request-row {
+  transition: background 0.15s ease;
+}
+
+.request-row:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* ========== COPY BUTTON ENHANCED ========== */
+.copy-btn {
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.copy-btn--copied {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: rgba(63, 185, 80, 0.08) !important;
+}
+
+/* ========== DETAIL PANEL SECTION TRANSITIONS ========== */
+.detail-section {
+  animation: fadeUpIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.detail-section:nth-child(1) { animation-delay: 0.05s; }
+.detail-section:nth-child(2) { animation-delay: 0.1s; }
+.detail-section:nth-child(3) { animation-delay: 0.15s; }
+.detail-section:nth-child(4) { animation-delay: 0.2s; }
+
+/* ========== BODY PRE SCROLL FIX ========== */
+.body-pre {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 13px;
+  margin: 0;
+  overflow: auto;
+  max-height: 50vh;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ========== RECENT INSPECTOR LINK HOVER ========== */
+.recent-link {
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.recent-link:hover {
+  border-color: var(--accent) !important;
+  transform: translateX(4px);
+}
+
+/* ========== EASTER EGG: MATRIX RAIN ========== */
+.matrix-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  animation: matrixFadeInOut 4s ease forwards;
+}
+
+.matrix-column {
+  position: absolute;
+  top: -100%;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 4px;
+  animation: matrixFall linear forwards;
+  opacity: 0.7;
+  text-shadow: 0 0 8px var(--accent);
+}
+
+@keyframes matrixFall {
+  to { top: 110%; }
+}
+
+@keyframes matrixFadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ========== EASTER EGG: LIVE DOT BURST ========== */
+.dot-burst-particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9999;
+  animation: burstOut 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes burstOut {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0);
+  }
+}
+
+/* Toast notification for easter eggs */
+.easter-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 10000;
+  animation: toastIn 0.3s ease forwards, toastOut 0.3s ease 2.5s forwards;
+  box-shadow: 0 0 20px rgba(63, 185, 80, 0.15);
+}
+
+@keyframes toastIn {
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+  to { transform: translateX(-50%) translateY(20px); opacity: 0; }
+}
+
+/* ========== SCROLLBAR STYLING ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
