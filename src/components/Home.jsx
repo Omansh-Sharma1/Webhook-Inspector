@@ -237,6 +237,49 @@ export default function Home() {
       {/* Easter egg overlays */}
       {showMatrix && <MatrixRain />}
       {toastMsg && <EasterToast message={toastMsg} />}
+
+      {/* --- SUBTLE FIXED SUBMISSION SIDEBAR BADGE --- */}
+      <div className="dh-submission-badge" style={{
+        position: 'fixed',
+        bottom: '1rem',
+        right: '1rem',
+        zIndex: 9999,
+        background: 'rgba(21, 25, 30, 0.95)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid #30363d',
+        padding: '0.75rem 1rem',
+        borderRadius: '8px',
+        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)',
+        fontFamily: 'monospace',
+        fontSize: '0.8rem',
+        textAlign: 'right'
+      }}>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <a 
+            href="https://digitalheroesco.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              color: '#3fb950', // Clean developer green text
+              textDecoration: 'none',
+              fontWeight: '600',
+              borderBottom: '1px dashed #3fb950',
+              paddingBottom: '2px',
+              fontSize: '0.85rem',
+              transition: 'color 0.2s ease'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#58a6ff'}
+            onMouseOut={(e) => e.currentTarget.style.color = '#3fb950'}
+          >
+            Built for Digital Heroes
+          </a>
+        </div>
+        <div style={{ color: '#8b949e', lineHeight: '1.4' }}>
+          <div>Dev: <span style={{ color: '#c9d1d9' }}>Omansh Sharma</span></div>
+          <div>Contact: <span style={{ color: '#8b949e' }}>omansh210305@gmail.com</span></div>
+        </div>
+      </div>
     </div>
   );
 }
