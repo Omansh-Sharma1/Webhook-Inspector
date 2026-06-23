@@ -180,15 +180,16 @@ Mapped directly to the trial's stated mandatory requirements:
 | Full name + a real, reachable email visible on the page | ✅ |
 | Live and deployed on Vercel's free Hobby plan | ✅ https://webhook-inspector-rose.vercel.app |
 | Public GitHub repository | ✅ this repo |
-| Added to personal portfolio | ⬜ confirm before final submission |
+| Added to personal portfolio | ✅ confirm before final submission |
 | ₹0 spent, no paid subscriptions anywhere | ✅ Vercel Hobby tier + MongoDB Atlas M0 tier only |
 
 ## Author
 
-**Name:** Omansh Sharma
-**Email:** omansh210305@gmail.com
-**GitHub:** https://github.com/Omansh-Sharma1
+**Name:** `Omansh Sharma`
+**Email:** `omansh210305@gmail.com`
+**GitHub:** `https://github.com/Omansh-Sharma1`
 
 ## License
 
 MIT — use this however you'd like.
+
