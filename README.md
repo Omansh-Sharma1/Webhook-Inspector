@@ -2,7 +2,7 @@
 
 See exactly what a webhook sends — generate a disposable URL, drop it into any webhook configuration, and watch the raw request land live in a clean dashboard. No signup, no cost, no deploy-and-redeploy loop just to see a payload.
 
-**Live demo:** `<add your Vercel URL here once deployed>`
+**Live demo:** https://webhook-inspector-rose.vercel.app
 
 ---
 
@@ -66,11 +66,11 @@ webhook-inspector/
 ├── lib/
 │   └── db.js                # MongoDB connection (cached across warm function invocations)
 ├── public/
-│   └── favicon.png
+│   └── logo.png
 ├── src/
 │   ├── components/
 │   │   ├── Home.jsx         # Landing page — generate an inspector
-│   │   ├── Dashboard.jsx    # /i/:slug — polling logic + two-pane layout
+│   │   ├── Dashboard.jsx    # /i/:slug — polling logic + two-pane layout + submission badge
 │   │   ├── RequestList.jsx  # Left panel: chronological list of captures
 │   │   └── RequestDetail.jsx# Right panel: headers / query / body for one request
 │   ├── App.jsx
@@ -88,8 +88,8 @@ webhook-inspector/
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/<your-username>/webhook-inspector.git
-cd webhook-inspector
+git clone https://github.com/Omansh-Sharma1/Webhook-Inspector.git
+cd Webhook-Inspector
 npm install
 ```
 
@@ -116,26 +116,30 @@ MONGODB_DB=webhook_inspector
 
 ### 4. Run locally
 
-This project needs the frontend and the `/api` serverless functions running together, so use the Vercel CLI:
+This project needs the frontend and the `/api` serverless functions running together. Run these in **two separate terminals**:
 
 ```bash
 npm install -g vercel
 vercel dev
 ```
 
-Open the printed URL (typically `http://localhost:3000`).
+```bash
+npm run dev
+```
+
+Open the URL `npm run dev` prints (typically `http://localhost:5173`) — it proxies `/api/*` calls through to `vercel dev` automatically.
 
 ## Testing It
 
 **Quick test with curl:**
 
 ```bash
-curl -X POST http://localhost:3000/api/i/<your-slug> \
+curl -X POST http://localhost:5173/api/i/<your-slug> \
   -H "Content-Type: application/json" \
   -d '{"event": "test", "value": 42}'
 ```
 
-**Real-world test:** paste your deployed inspector URL into a GitHub repo's **Settings → Webhooks**, trigger an event (push a commit, open an issue), and watch it land without sending anything manually.
+**Real-world test (verified):** this tool has been tested against an actual GitHub repository webhook — both the automatic `ping` event GitHub sends on webhook creation, and a real `push` event triggered by a normal commit, landed correctly in the live dashboard with zero manual sending. Confirmed via GitHub's own **Recent Deliveries** log (`200` response) and by the distinguishing headers GitHub sends (`x-github-event`, `x-github-delivery`, `user-agent: GitHub-Hookshot/...`) showing up exactly as captured.
 
 ## Deployment
 
@@ -152,11 +156,13 @@ vercel --prod
 ## Design Decisions & Known Limitations
 
 - **Polling, not WebSockets** — a deliberate choice given Vercel's stateless serverless functions; see "How It Works" above.
+- **No webhook signature verification yet** — platforms like GitHub and Stripe support signing payloads with a shared secret (e.g. GitHub's `X-Hub-Signature-256` header) so a receiver can confirm a request genuinely came from them and wasn't spoofed. This project's webhook was tested with no secret configured, so signature verification isn't implemented in this version — see Roadmap.
 - **No authentication** — anyone with the inspector URL can view its captures. Fine for a disposable debugging tool, not intended for long-lived secrets.
 - **48-hour expiry** — inspectors are meant to be temporary by design, not a permanent log store.
 
 ## Roadmap
 
+- [ ] Verify webhook signatures (HMAC) when a shared secret is configured, starting with GitHub's `X-Hub-Signature-256` scheme
 - [ ] Request replay — resend a captured request's exact headers/body to a new URL
 - [ ] Real-time updates via a free-tier pub/sub service instead of polling
 - [ ] Side-by-side diff view between two captured requests
@@ -165,20 +171,23 @@ vercel --prod
 
 ## Built For — Digital Heroes Developer Trial Task
 
-This project satisfies every stated requirement of the assignment:
+Mapped directly to the trial's stated mandatory requirements:
 
-- [x] **Actually works and produces real output** — captures and displays live HTTP requests end-to-end
-- [x] **Solves a problem I personally hit** — debugging webhook payloads during open-source contributions
-- [x] **Polished and complete rather than large and unfinished** — scoped deliberately to a focused MVP
-- [x] **Deployed on Vercel** — frontend + serverless functions in a single deployment
-- [x] **Public GitHub repository** — this repo
-- [x] **No paid services** — Vercel Hobby tier + MongoDB Atlas free M0 tier only
+| Requirement | Status |
+|---|---|
+| Tool works and gives correct output | ✅ Verified locally, in production, and against a real GitHub `ping`/`push` webhook |
+| Button labelled exactly "Built for Digital Heroes" → https://digitalheroesco.com | ✅ Visible in-app |
+| Full name + a real, reachable email visible on the page | ✅ |
+| Live and deployed on Vercel's free Hobby plan | ✅ https://webhook-inspector-rose.vercel.app |
+| Public GitHub repository | ✅ this repo |
+| Added to personal portfolio | ⬜ confirm before final submission |
+| ₹0 spent, no paid subscriptions anywhere | ✅ Vercel Hobby tier + MongoDB Atlas M0 tier only |
 
 ## Author
 
-**Name:** `<your name>`
-**Email:** `<your email>`
-**GitHub:** `<your GitHub profile link>`
+**Name:** Omansh Sharma
+**Email:** omansh210305@gmail.com
+**GitHub:** https://github.com/Omansh-Sharma1
 
 ## License
 
