@@ -158,7 +158,7 @@ vercel --prod
 - **Polling, not WebSockets** — a deliberate choice given Vercel's stateless serverless functions; see "How It Works" above.
 - **No webhook signature verification yet** — platforms like GitHub and Stripe support signing payloads with a shared secret (e.g. GitHub's `X-Hub-Signature-256` header) so a receiver can confirm a request genuinely came from them and wasn't spoofed. This project's webhook was tested with no secret configured, so signature verification isn't implemented in this version — see Roadmap.
 - **No authentication** — anyone with the inspector URL can view its captures. Fine for a disposable debugging tool, not intended for long-lived secrets.
-- **48-hour expiry** — inspectors are meant to be temporary by design, not a permanent log store.
+- **8-minute expiry** — inspectors are meant to be temporary by design, not a permanent log store.(initially set to 48 hours, but reduced for the sake of checkups.)
 
 ## Roadmap
 
